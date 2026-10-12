@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Live Telemetry Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        pre {
+            background: #f1f1f1;
+            padding: 16px;
+            border: 1px solid #ccc;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            min-height: 150px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Drone Live Telemetry</h2>
+    <p id="status">Connecting...</p>
+
+    <h3>Latest JSON received</h3>
+    <pre id="output">Waiting for telemetry...</pre>
+
+    
+<script>
+    const status = document.getElementById("status");
+    const output = document.getElementById("output");
+
+    const socket = new WebSocket(
+        "ws://127.0.0.1:8000/ws/telemetry"
+    );
+
+    socket.onopen = () => {
+        status.textContent = "Connected to live telemetry";
+        output.textContent = "Connected. Waiting for a new reading...";
+        console.log("WebSocket connected");
+    };
+
+    socket.onmessage = (event) => {
+        console.log("WebSocket message received:", event.data);
+
+        try {
+            const message = JSON.parse(event.data);
+            output.textContent = JSON.stringify(message, null, 2);
+        } catch (error) {
+            console.error("Could not parse message:", error);
+            output.textContent = event.data;
+        }
+    };
+
+    socket.onerror = (event) => {
+        status.textContent = "WebSocket error. Check backend terminal.";
+        console.error("WebSocket error:", event);
+    };
+
+    socket.onclose = (event) => {
+        status.textContent =
+            `Disconnected. Code: ${event.code}. Refresh after checking the backend.`;
+        console.log("WebSocket closed:", event.code, event.reason);
+    };
+</script>
+</body>
+</html>

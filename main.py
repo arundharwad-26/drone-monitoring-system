@@ -1,8 +1,14 @@
-# main.py
 
+import os
 from typing import Literal
 
-from fastapi import FastAPI, HTTPException, Header, WebSocket, WebSocketDisconnect
+from fastapi import (
+    FastAPI,
+    HTTPException,
+    Header,
+    WebSocket,
+    WebSocketDisconnect,
+)
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -21,16 +27,35 @@ app = FastAPI(
     version="1.1.0",
 )
 
+
+# --------------------------------------------------
+# CORS CONFIGURATION
+# --------------------------------------------------
+
+frontend_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+# Set FRONTEND_URL in your deployment environment.
+# Example: https://your-frontend.example.com
+deployed_frontend = os.getenv("FRONTEND_URL", "").strip().rstrip("/")
+
+if deployed_frontend:
+    frontend_origins.append(deployed_frontend)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
+    allow_origins=frontend_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# --------------------------------------------------
+# ROUTERS AND APPLICATION STATE
+# --------------------------------------------------
 
 app.include_router(image_router)
 
@@ -46,6 +71,10 @@ def startup():
     create_table()
 
 
+# --------------------------------------------------
+# GENERAL ENDPOINTS
+# --------------------------------------------------
+
 @app.get("/")
 def home():
     return {
@@ -58,6 +87,10 @@ def home():
 def health_check():
     return {"status": "healthy"}
 
+
+# --------------------------------------------------
+# DRONE OPERATING MODE
+# --------------------------------------------------
 
 @app.get("/mode")
 def get_mode():
@@ -78,6 +111,10 @@ def set_mode(request: ModeRequest):
         "mode": ACTIVE_MODE,
     }
 
+
+# --------------------------------------------------
+# TELEMETRY INGESTION AND ANOMALY DETECTION
+# --------------------------------------------------
 
 @app.post("/telemetry")
 async def receive_telemetry(
@@ -124,7 +161,9 @@ async def receive_telemetry(
             if same_reading:
                 raise HTTPException(
                     status_code=409,
-                    detail="Duplicate telemetry: identical to latest reading",
+                    detail=(
+                        "Duplicate telemetry: identical to latest reading"
+                    ),
                 )
 
         cursor = connection.execute(
@@ -218,6 +257,10 @@ async def receive_telemetry(
     }
 
 
+# --------------------------------------------------
+# LATEST TELEMETRY FOR A DRONE
+# --------------------------------------------------
+
 @app.get("/telemetry/{drone_id}")
 def get_telemetry(drone_id: str):
     connection = get_connection()
@@ -244,6 +287,10 @@ def get_telemetry(drone_id: str):
 
     return dict(row)
 
+
+# --------------------------------------------------
+# LATEST TELEMETRY FOR ALL DRONES
+# --------------------------------------------------
 
 @app.get("/drones")
 def get_all_drones():
@@ -281,6 +328,10 @@ def get_all_drones():
     }
 
 
+# --------------------------------------------------
+# WEBSOCKET TELEMETRY
+# --------------------------------------------------
+
 @app.websocket("/ws/telemetry")
 async def telemetry_websocket(websocket: WebSocket):
     await manager.connect(websocket)
@@ -288,9 +339,12 @@ async def telemetry_websocket(websocket: WebSocket):
     try:
         while True:
             await websocket.receive_text()
+
     except WebSocketDisconnect:
         pass
+
     except Exception as error:
         print("WebSocket error:", repr(error))
+
     finally:
         manager.disconnect(websocket)

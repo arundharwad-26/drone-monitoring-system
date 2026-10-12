@@ -11,8 +11,11 @@ import "leaflet/dist/leaflet.css";
 import "./App.css";
 import useDangerBuzzer from "./useDangerBuzzer";
 
-const API_URL = "http://127.0.0.1:8000";
-const WS_URL = "ws://127.0.0.1:8000/ws/telemetry";
+const API_URL = (
+  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
+).replace(/\/+$/, "");
+
+const WS_URL = `${API_URL.replace(/^http/, "ws")}/ws/telemetry`;
 
 function getAlertMessage(alert) {
   if (typeof alert === "string") return alert;

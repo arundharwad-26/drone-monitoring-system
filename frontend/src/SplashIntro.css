@@ -1,0 +1,150 @@
+.splash-root {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  overflow: hidden;
+  background: #071a18;
+  color: #f4fbff;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  opacity: 1;
+  transition: opacity 0.7s ease;
+}
+.splash-root.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+.splash-root * {
+  box-sizing: border-box;
+}
+
+.splash-canvas {
+  position: absolute !important;
+  inset: 0;
+}
+
+.splash-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(2, 10, 12, 0.55) 100%);
+}
+
+/* The overlay lets mouse movement reach the 3D scene; only buttons are clickable. */
+.splash-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5vh 20px 5vh;
+}
+
+.splash-skip {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  pointer-events: auto;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(160, 235, 255, 0.4);
+  background: rgba(6, 22, 30, 0.45);
+  color: #d8f6ff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  backdrop-filter: blur(6px);
+  transition: background 0.2s, border-color 0.2s;
+}
+.splash-skip:hover {
+  background: rgba(20, 70, 90, 0.6);
+  border-color: rgba(160, 235, 255, 0.8);
+}
+
+.splash-title {
+  text-align: center;
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: opacity 1s ease, transform 1s ease;
+  margin-top: 2vh;
+}
+.splash-title.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.splash-kicker {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  color: #8addeb;
+}
+.splash-title h1 {
+  margin: 0;
+  font-size: clamp(38px, 6vw, 72px);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  text-shadow: 0 0 36px rgba(60, 220, 255, 0.3), 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+.splash-title h1 span {
+  color: #4eeaff;
+}
+.splash-sub {
+  margin: 12px 0 0;
+  font-size: clamp(12px, 1.5vw, 16px);
+  letter-spacing: 0.14em;
+  color: rgba(228, 248, 255, 0.82);
+}
+
+.splash-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.splash-footer.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.splash-badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 196, 94, 0.7);
+  background: rgba(60, 36, 4, 0.45);
+  color: #ffd98a;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+.splash-note {
+  margin: 0;
+  max-width: 420px;
+  font-size: 13px;
+  color: rgba(225, 245, 250, 0.8);
+}
+.splash-enter {
+  pointer-events: auto;
+  cursor: pointer;
+  margin-top: 4px;
+  padding: 13px 34px;
+  border-radius: 12px;
+  border: 1px solid rgba(110, 240, 255, 0.85);
+  background: linear-gradient(180deg, rgba(40, 190, 230, 0.35), rgba(16, 110, 160, 0.45));
+  color: #eaffff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  box-shadow: 0 0 28px rgba(60, 220, 255, 0.3);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.splash-enter:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 40px rgba(60, 220, 255, 0.55);
+}

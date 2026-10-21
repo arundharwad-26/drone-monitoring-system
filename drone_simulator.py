@@ -7,7 +7,8 @@ import requests
 # CONFIGURATION
 # =========================================================
 
-BASE_URL = "http://127.0.0.1:8000"
+#BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "https://drone-monitoring-system-mbdy.onrender.com"
 
 API_URL = f"{BASE_URL}/telemetry"
 MODE_URL = f"{BASE_URL}/mode"
